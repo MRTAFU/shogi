@@ -1,0 +1,141 @@
+body{
+  background-image: url("../img/koma_img/background.jpg");
+  background-size: cover;
+  color:#ffffff;
+}
+header{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /*font-weight: 400;*/
+}
+
+main{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#login{
+  padding: 2% 15%;
+  margin: 5% 0 0 0;
+  background: rgba(0,0,0, 0.4);
+}
+
+input{
+  width: 300px;
+}
+
+button{
+  margin: ;
+  background: rgba(255,255,255, 0.4);
+  /*opacity: 0.4;*/
+  border-style: none;
+  color: #ffffff;
+}
+button:hover{
+  background: rgba(255,255,255, 0.6);
+  border-style: none;
+  -webkit-transition: all 0.15s ease;
+  -moz-transition: all 0.15s ease;
+  -o-transition: all 0.15s ease;
+  transition: all  0.15s ease;
+  color: #ffffff;
+}
+
+a{
+  font-size: 15px;
+  color: #ffffff;
+  text-decoration: none;
+  -webkit-transition: all 0.1s ease;
+  -moz-transition: all 0.1s ease;
+  -o-transition: all 0.1s ease;
+  transition: all  0.1s ease;
+  opacity: 0.6;
+}
+a:hover{
+  font-size: 15px;
+  color: #ffffff;
+  opacity: 0.8;
+}
+.link{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+label{
+  color: #ffffff;
+}
+
+#wrap{
+  width: 50%;
+  margin: 0 auto;
+}
+
+table{
+  width: 720px;
+  height: 720px;
+  border: 2px solid #000000;
+  table-layout: fixed;
+  /*background-image: url("../img/koma_img/ban.png");*/
+  background: rgba(255,255,255, 0.2);
+  margin: 0 auto;
+  box-shadow:0px 0px 10px 5px #000000;
+  -moz-box-shadow:0px 0px  10px 5px #000000;
+  -webkit-box-shadow:0px 0px 6px 1px #000000;
+}
+
+td{
+  border: 2px solid #000000;
+  height: 11%;
+  width: 11%;
+  vertical-align: middle; 
+  text-align: center;
+  
+  /*onmouseover="this.style.color='red'"*/
+}
+
+
+#guide{
+  font-size: 200px;
+  opacity: 0.5;
+}
+
+.red{
+  /*background: rgba(255,0,0, 0.5)*/
+  opacity: 0.5;
+  background-color: #ff0000;
+}
+
+.green{
+  /*background: rgba(255,0,0, 0.5)*/
+  opacity: 0.5;
+  background-color: #00ff00;
+}
+
+.enemy{
+  transform: rotate(-180deg);
+}
+
+.grave{
+  height: 200px;
+  width: 200px;
+  /*background-image: url("../img/koma_img/ban.png");*/
+  background: rgba(255,255,255, 0.2);
+  box-shadow:0px 0px 6px 1px #000000;
+  -moz-box-shadow:0px 0px 6px 1px #000000;
+  -webkit-box-shadow:0px 0px 6px 1px #000000;
+}
+
+#grave1{
+  margin-left: auto;
+  /*background-image: url("../img/koma_img/ban.png");*/
+}
+
+#grave2{
+  /*background-color: #ffffff;*/
+  /*background: rgba(255,255,255, 0.4)*/
+}
