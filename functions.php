@@ -5,7 +5,7 @@
 function db_con(){
   $dbname='gs_db';
   try {
-    $pdo = new PDO('mysql:dbname=tafunakazaki_db01;charset=utf8;host=mysql611.db.sakura.ne.jp','tafunakazaki','sunseT1011');
+    $pdo = new PDO('mysql:dbname='.$dbname.';charset=utf8;host=localhost','root','');
   } catch (PDOException $e) {
     exit('DbConnectError:'.$e->getMessage());
   }

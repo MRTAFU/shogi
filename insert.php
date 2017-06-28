@@ -1,42 +1,38 @@
-<?php 
-include('functions.php');
-
+<?php
+include("functions.php");
+//入力チェック(受信確認処理追加)
 if(
-    !isset($_POST["name"]) || $_POST["name"]=='' ||
-    !isset($_POST["lid"]) || $_POST["lid"]=='' ||
-    !isset($_POST["lpw"]) || $_POST["lpw"]=='' 
+  !isset($_POST["battlename"]) || $_POST["battlename"]=="" ||
+  !isset($_POST["memo"]) || $_POST["memo"]==""
 ){
   exit('ParamError');
-};
+}
 
-//POSTデータ取得
-$name = $_POST["name"];
-$lid = $_POST["lid"];
-$lpw = $_POST["lpw"];
+//1. POSTデータ取得
+$userid   = $_POST["userid"];
+$battlename   = $_POST["battlename"];
+$memo = $_POST["memo"];
+$kifu = $_POST["kifu"];
 
-
-//DB接続処理
+//2. DB接続します(エラー処理追加)
 $pdo = db_con();
 
-$stmt = $pdo->prepare('INSERT INTO gs_user_table(id, name, lid, lpw,
- kanri_flg, life_flg)VALUES(NULL, :name, :lid, :lpw, 0, 1)');
-$stmt->bindValue(':name', $name,   PDO::PARAM_STR);  //Integer（数値の場合 PDO::PARAM_INT)
-$stmt->bindValue(':lid', $lid,  PDO::PARAM_STR);  //Integer（数値の場合 PDO::PARAM_INT)
-$stmt->bindValue(':lpw', $lpw, PDO::PARAM_STR);  //Integer（数値の場合 PDO::PARAM_INT)
+//３．データ登録SQL作成
+$stmt = $pdo->prepare("INSERT INTO gs_kifu_table(id, userid, battlename, memo,
+indate, kifu)VALUES(NULL, :a1, :a2, :a3, sysdate(), :a4)");
+$stmt->bindValue(':a1', $userid,   PDO::PARAM_STR);  //Integer（数値の場合 PDO::PARAM_INT)
+$stmt->bindValue(':a2', $battlename, PDO::PARAM_STR);  //Integer（数値の場合 PDO::PARAM_INT)
+$stmt->bindValue(':a3', $memo, PDO::PARAM_STR);  //Integer（数値の場合 PDO::PARAM_INT)
+$stmt->bindValue(':a4', $kifu, PDO::PARAM_STR);  //Integer（数値の場合 PDO::PARAM_INT)
 $status = $stmt->execute();
 
 //４．データ登録処理後
 if($status==false){
-  //SQL実行時にエラーがある場合（エラーオブジェクト取得して表示）
-  $error = $stmt->errorInfo();
-  exit("QueryError:".$error[2]);
+  queryError($stmt);
+
 }else{
   //５．index.phpへリダイレクト
-  header("Location: login.php");
+  header("Location: main.php");
   exit;
 }
-
-
-
-
- ?>
+?>

@@ -1,7 +1,32 @@
 <?php 
-// session_start();
-// include("functions.php");
-// chkSSID();
+session_start();
+include("functions.php");
+chkSSID();
+
+
+
+//1.  DB接続します
+$pdo = db_con();
+
+//２．データ登録SQL作成
+$stmt = $pdo->prepare("SELECT * FROM gs_user_table");
+$status = $stmt->execute();
+
+//３．データ表示
+$view="";
+$username="";
+if($status==false){
+  queryError($stmt);
+}else{
+  //Selectデータの数だけ自動でループしてくれる
+  while( $result = $stmt->fetch(PDO::FETCH_ASSOC)){
+    $view .= '<p>';
+    $view .= '<a href="select.php?id='.$result["id"].'">';
+    $view .= h($result["name"]);
+    $view .= '</a>　';
+    $view .= '</p>';
+  }
+}
  ?>
 
 
@@ -147,12 +172,16 @@
   <div class="jumbotron">
    <fieldset>
     <legend>記録</legend>
+     <label>userid：<input type="text" name="userid" placeholder="example)1"></label><br>
      <label>対決名：<input type="text" name="battlename" placeholder="example)"></label><br>
-     <label>メモ：<textArea name="naiyou" rows="4" cols="40" placeholder="example)あの一手は神武以来の一手だった"></textArea></label><br>
+     <label>メモ：<textArea name="memo" rows="4" cols="40" placeholder="example)あの一手は神武以来の一手だった"></textArea></label><br>
+     <input type="text" name="kifu" value=kifu><br>
+     <!-- <input type="text" name="username" value="<?=$username?>"> -->
      <button type="submit" value="save">保存</button>
     </fieldset>
   </div>
 </form>
+<label><div id="username"><?=$view?></div></label>
 <!-- <div id="p1turntime">(ここに対局時間が表示されます)</div> -->
 <!-- <div id="p1totaltime">(ここに対局時間が表示されます)</div> -->
 </div>
@@ -548,6 +577,7 @@ $("#kiban td").bind('click', function(){
             if(cell[i]["x"]==x && cell[i]["y"]==y){
                 turncheck();
                 activate(i);
+                oute();
                 gyokucantmove(i);
                 move(i);
                 oute();

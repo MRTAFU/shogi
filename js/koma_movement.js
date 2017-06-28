@@ -132,6 +132,7 @@ function komadori(i){
 function move(i){
     if(cell[i]["cand_flg"]==1){
         komadori(i);
+        oute();
         for(let j=0;j<=160;j++){
 
             if(cell[j]["pre_flg"]==1){
@@ -150,7 +151,7 @@ function move(i){
             };
         };
         shiftdeactivate(i);
-        oute();
+        
         outecheck();
         addkifulist();
         turn++;
