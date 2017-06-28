@@ -59,44 +59,34 @@ function komaselector(komatype){
 function showkoma(){
     for(let i=0; i<=80; i++){
         if(cell[i]["koma_flg"]==1){
-            console.log("flg1")
             //komaselector()で駒種類を判別
             var image = komaselector(cell[i]["koma_type"]);
-            console.log("komatype:" + cell[i]["koma_type"]);
-            console.log("読み込みイメージ：" + image);
     
             var t = document.getElementById('kiban');
             var c = t.rows[cell[i]["x"]].cells[cell[i]["y"]];
-            console.log("which cell:" + c.innerHTML);
 
             if(cell[i]["koma_own"]==1){
-                console.log("プレーヤー：" + cell[i]["koma_own"]);
                 c.innerHTML = '<img src="img/koma_img/' + image + '" alt="' + image + '">';
             }else if(cell[i]["koma_own"]==2){
-                console.log("プレーヤー：" + cell[i]["koma_own"]);
                 c.innerHTML = '<img class="enemy" src="img/koma_img/' + image + '" alt="' + image + '">';
             };
         }else{
-            console.log("flg1")
+            var t = document.getElementById('kiban');
             var c = t.rows[cell[i]["x"]].cells[cell[i]["y"]];
-            c.innerHTML = "";
+            c.innerHTML = "　";
         }
     };
+    //表示処理が作動する毎にタグ
     $("#grave1").html('');
     $("#grave2").html('');
     for(let k=81; k<=160; k++){
         if(cell[k]["koma_flg"]==1){
-
             //komaselector()で駒種類を判別
             var image = komaselector(cell[k]["koma_type"]);
-            console.log("komatype:" + cell[k]["koma_type"]);
-            console.log("読み込みイメージ：" + image);
 
             if(cell[k]["koma_own"]==1){
-                console.log("プレーヤー：" + cell[k]["koma_own"]);
                 $("#grave1").append('<img id="' + k + '" src="img/koma_img/' + image + '" alt="' + image + '" onclick="reborn(this);">');
             }else if(cell[k]["koma_own"]==2){
-                console.log("プレーヤー：" + cell[k]["koma_own"]);
                 $("#grave2").append('<img id="' + k + '" class="enemy" src="img/koma_img/' + image + '" alt="' + image + '" onclick="reborn(this);">');
             };
         };

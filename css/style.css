@@ -2,6 +2,10 @@ body{
   background-image: url("../img/koma_img/background.jpg");
   background-size: cover;
   color:#ffffff;
+  height: 100%;
+  width: 100%;
+  margin: 0 auto;
+
 }
 header{
   display: flex;
@@ -14,6 +18,8 @@ main{
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100%;
+  width: 100%;
 }
 
 #login{
@@ -24,6 +30,8 @@ main{
 
 input{
   width: 300px;
+  height: 20px;
+  border-style: none;
 }
 
 button{
@@ -71,13 +79,21 @@ label{
 }
 
 #wrap{
-  width: 50%;
+  width: 100%;
+  height: 100%;
   margin: 0 auto;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: -o-flex;
+  display: flex;
 }
 
 table{
-  width: 720px;
-  height: 720px;
+  width: 600px;
+  height: 600px;
+  /*width: 100%;*/
+  /*height: 100%;*/
   border: 2px solid #000000;
   table-layout: fixed;
   /*background-image: url("../img/koma_img/ban.png");*/
@@ -88,16 +104,19 @@ table{
   -webkit-box-shadow:0px 0px 6px 1px #000000;
 }
 
+
 td{
   border: 2px solid #000000;
   height: 11%;
   width: 11%;
-  vertical-align: middle; 
+  vertical-align: middle;
   text-align: center;
-  
   /*onmouseover="this.style.color='red'"*/
 }
-
+#kibanbox{
+  width: 100%;
+  height: 100%;
+}
 
 #guide{
   font-size: 200px;
@@ -121,6 +140,8 @@ td{
 }
 
 .grave{
+  /*width: 100%;*/
+  /*height: auto;*/
   height: 200px;
   width: 200px;
   /*background-image: url("../img/koma_img/ban.png");*/
@@ -131,11 +152,166 @@ td{
 }
 
 #grave1{
-  margin-left: auto;
-  /*background-image: url("../img/koma_img/ban.png");*/
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 #grave2{
-  /*background-color: #ffffff;*/
-  /*background: rgba(255,255,255, 0.4)*/
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  flex-wrap: wrap-reverse;
+}
+
+#itembox1{
+  width: 20%;
+  display: flex;
+  align-items: flex-start;
+  /*justify-content: center;*/
+  flex-direction: column;
+  align-content: flex-start;
+}
+#itembox3{
+  width: 20%;
+  /*height: 15%;*/
+  display: flex;
+  align-items: flex-end;
+  /*justify-content: center;*/
+  flex-direction: column-reverse;
+  align-content: flex-end;
+}
+#itembox2{
+  width: 60%;
+  /*height: 700px;*/
+}
+
+img{
+  width: 50px;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all  0.5s ease;
+}
+
+
+
+
+@media only screen and (max-device-width: 600px) {
+/*  body{
+    background-image: url("../img/koma_img/background.jpg");
+    background-size: cover;
+    color:#ffffff;
+    height: 650px;
+    width: 100%;
+    margin: 0 auto;
+  }*/
+
+  a{
+    font-size: 20px;
+    color: #ffffff;
+    text-decoration: none;
+    -webkit-transition: all 0.1s ease;
+    -moz-transition: all 0.1s ease;
+    -o-transition: all 0.1s ease;
+    transition: all  0.1s ease;
+    opacity: 0.6;
+  }
+  a:hover{
+    font-size: 20px;
+    color: #ffffff;
+    opacity: 0.8;
+  }
+  .link{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  #wrap{
+    width: 100%;
+    height: 100%;
+    /*margin: 0 auto;*/
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  #kibanbox{
+    width: 100%;
+    height: 100%;
+  }
+  table{
+    width: 360px;
+    height: 360px;
+    /*width: 100%;*/
+    /*height: 100%;*/
+    border: 2px solid #000000;
+    table-layout: fixed;
+    /*background-image: url("../img/koma_img/ban.png");*/
+    background: rgba(255,255,255, 0.2);
+    margin: 0 auto;
+    box-shadow:0px 0px 10px 5px #000000;
+    -moz-box-shadow:0px 0px  10px 5px #000000;
+    -webkit-box-shadow:0px 0px 6px 1px #000000;
+  }
+  .grave{
+    /*width: 100%;*/
+    /*height: auto;*/
+    height: 70px;
+    width: 70%;
+    /*background-image: url("../img/koma_img/ban.png");*/
+    background: rgba(255,255,255, 0.2);
+    box-shadow:0px 0px 6px 1px #000000;
+    -moz-box-shadow:0px 0px 6px 1px #000000;
+    -webkit-box-shadow:0px 0px 6px 1px #000000;
+  }
+  
+  #grave1{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  
+  #grave2{
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    flex-wrap: wrap-reverse;
+  }
+  
+  #itembox1{
+    /*height: 15%;*/
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center; 
+  }
+  #itembox3{
+    /*height: 15%;*/
+    width: 100%;
+    /*height: 15%;*/
+    display: flex;
+    align-items: flex-end;
+    justify-content: center; 
+  }
+  #itembox2{
+    height: 70%;
+    width: 100%;
+    /*height: 100%;*/
+  }
+  
+  img{
+    width: 30px;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all  0.5s ease;
+  }
+
+
 }

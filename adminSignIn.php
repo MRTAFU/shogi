@@ -27,7 +27,7 @@
         </fieldset>
 </form>
 </main>
-<div class="link"><a href="index.php">User Sign In</a></div>
+<div class="link"><a href="login.php">User Sign In</a></div>
 
 <script></script>
 

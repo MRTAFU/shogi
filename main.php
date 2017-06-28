@@ -1,7 +1,7 @@
 <?php 
-session_start();
-include("functions.php");
-chkSSID();
+// session_start();
+// include("functions.php");
+// chkSSID();
  ?>
 
 
@@ -17,15 +17,25 @@ chkSSID();
 <body>
 <script src="js/jquery-2.1.3.min.js"></script> 
 <script src="js/koma_set.js"></script> 
-<script src="js/koma_select.js"></script> 
+<script src="js/oute.js"></script> 
 <script src="js/koma_reborn.js"></script> 
-<!-- <script src="js/koma_movement.js"></script>  -->
+<script src="js/koma_movement.js"></script> 
+<script src="js/koma_highlight.js"></script> 
+<script src="js/turn.js"></script>
+<script src="js/counter.js"></script> 
+<script src="js/kifu.js"></script> 
 <header>
   <a href="logout.php">log out</a>
 </header>
 <main>
 <div id="wrap">
+<div id="itembox1">
 <div class="grave" id="grave2"></div>
+<!-- <div id="p2turntime">(ここに対局時間が表示されます)</div> -->
+<!-- <div id="p2totaltime">(ここに対局時間が表示されます)</div> -->
+</div>
+<div id="itembox2">
+<div id="kibanbox">
 <table id="kiban" rules="all">
 <tr>
 <td>0-0</td>
@@ -127,7 +137,25 @@ chkSSID();
 <td>8-8</td>
 </tr>
 </table>
+</div>
+</div>
+<div id="itembox3">
 <div class="grave" id="grave1"></div>
+<div id="alltotaltime">00:00:00</div>
+<div>試合経過時間</div>
+<form method="post" action="insert.php">
+  <div class="jumbotron">
+   <fieldset>
+    <legend>記録</legend>
+     <label>対決名：<input type="text" name="battlename" placeholder="example)"></label><br>
+     <label>メモ：<textArea name="naiyou" rows="4" cols="40" placeholder="example)あの一手は神武以来の一手だった"></textArea></label><br>
+     <button type="submit" value="save">保存</button>
+    </fieldset>
+  </div>
+</form>
+<!-- <div id="p1turntime">(ここに対局時間が表示されます)</div> -->
+<!-- <div id="p1totaltime">(ここに対局時間が表示されます)</div> -->
+</div>
 </div>
 
 
@@ -135,198 +163,403 @@ chkSSID();
 <script>
 //x:0~8, y:0~8, koma_flg:[0->off, 1->on], koma_own:[1->player1, 2->player2], 
 // koma_type:[0->歩,1->飛車,2->角行,3->香車,4->桂馬,5->銀,6->金,7->玉,8->と金,9->龍王,10->龍馬,11->成香,12->成桂,13->成銀],cand_flg:[0->on, 1->off]
-  let cell = [{x:0, y:0, koma_flg:1, koma_own:2, koma_type:3, cand_flg:0},
-              {x:0, y:1, koma_flg:1, koma_own:2, koma_type:4, cand_flg:0},
-              {x:0, y:2, koma_flg:1, koma_own:2, koma_type:5, cand_flg:0},
-              {x:0, y:3, koma_flg:1, koma_own:2, koma_type:6, cand_flg:0},
-              {x:0, y:4, koma_flg:1, koma_own:2, koma_type:7, cand_flg:0},
-              {x:0, y:5, koma_flg:1, koma_own:2, koma_type:6, cand_flg:0},
-              {x:0, y:6, koma_flg:1, koma_own:2, koma_type:5, cand_flg:0},
-              {x:0, y:7, koma_flg:1, koma_own:2, koma_type:4, cand_flg:0},
-              {x:0, y:8, koma_flg:1, koma_own:2, koma_type:3, cand_flg:0},
+  let cell = [{x:0, y:0, koma_flg:1, koma_own:2, koma_type:3, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:0, y:1, koma_flg:1, koma_own:2, koma_type:4, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:0, y:2, koma_flg:1, koma_own:2, koma_type:5, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:0, y:3, koma_flg:1, koma_own:2, koma_type:6, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:0, y:4, koma_flg:1, koma_own:2, koma_type:7, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:0, y:5, koma_flg:1, koma_own:2, koma_type:6, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:0, y:6, koma_flg:1, koma_own:2, koma_type:5, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:0, y:7, koma_flg:1, koma_own:2, koma_type:4, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:0, y:8, koma_flg:1, koma_own:2, koma_type:3, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:1, y:0, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:1, y:1, koma_flg:1, koma_own:2, koma_type:1, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:1, y:2, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:1, y:3, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:1, y:4, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:1, y:5, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:1, y:6, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:1, y:7, koma_flg:1, koma_own:2, koma_type:2, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:1, y:8, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:2, y:0, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:2, y:1, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:2, y:2, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:2, y:3, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:2, y:4, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:2, y:5, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:2, y:6, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:2, y:7, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:2, y:8, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:3, y:0, koma_flg:0, koma_own:2, koma_type:1, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:3, y:1, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:3, y:2, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:3, y:3, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:3, y:4, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:3, y:5, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:3, y:6, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:3, y:7, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:3, y:8, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:4, y:0, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:4, y:1, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:4, y:2, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:4, y:3, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:4, y:4, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:4, y:5, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:4, y:6, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:4, y:7, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:4, y:8, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:5, y:0, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:5, y:1, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:5, y:2, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:5, y:3, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:5, y:4, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:5, y:5, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:5, y:6, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:5, y:7, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:5, y:8, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:6, y:0, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:6, y:1, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:6, y:2, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:6, y:3, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:6, y:4, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:6, y:5, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:6, y:6, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:6, y:7, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:6, y:8, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:7, y:0, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:7, y:1, koma_flg:1, koma_own:1, koma_type:2, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:7, y:2, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:7, y:3, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:7, y:4, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:7, y:5, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:7, y:6, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:7, y:7, koma_flg:1, koma_own:1, koma_type:1, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:7, y:8, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:8, y:0, koma_flg:1, koma_own:1, koma_type:3, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:8, y:1, koma_flg:1, koma_own:1, koma_type:4, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:8, y:2, koma_flg:1, koma_own:1, koma_type:5, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:8, y:3, koma_flg:1, koma_own:1, koma_type:6, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:8, y:4, koma_flg:1, koma_own:1, koma_type:7, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:8, y:5, koma_flg:1, koma_own:1, koma_type:6, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:8, y:6, koma_flg:1, koma_own:1, koma_type:5, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:8, y:7, koma_flg:1, koma_own:1, koma_type:4, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
+              {x:8, y:8, koma_flg:1, koma_own:1, koma_type:3, cand_flg:0, pre_flg:0, p1bomb_flg:0, p2bomb_flg:0},
 
-              {x:1, y:0, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:1, y:1, koma_flg:1, koma_own:2, koma_type:1, cand_flg:0},
-              {x:1, y:2, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:1, y:3, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:1, y:4, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:1, y:5, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:1, y:6, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:1, y:7, koma_flg:1, koma_own:2, koma_type:2, cand_flg:0},
-              {x:1, y:8, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
+  // let cell = [{x:0, y:0, koma_flg:0, koma_own:2, koma_type:3, cand_flg:0, pre_flg:0},
+  //             {x:0, y:1, koma_flg:0, koma_own:2, koma_type:4, cand_flg:0, pre_flg:0},
+  //             {x:0, y:2, koma_flg:0, koma_own:2, koma_type:5, cand_flg:0, pre_flg:0},
+  //             {x:0, y:3, koma_flg:0, koma_own:2, koma_type:6, cand_flg:0, pre_flg:0},
+  //             {x:0, y:4, koma_flg:0, koma_own:2, koma_type:7, cand_flg:0, pre_flg:0},
+  //             {x:0, y:5, koma_flg:0, koma_own:2, koma_type:6, cand_flg:0, pre_flg:0},
+  //             {x:0, y:6, koma_flg:0, koma_own:2, koma_type:5, cand_flg:0, pre_flg:0},
+  //             {x:0, y:7, koma_flg:0, koma_own:2, koma_type:4, cand_flg:0, pre_flg:0},
+  //             {x:0, y:8, koma_flg:0, koma_own:2, koma_type:3, cand_flg:0, pre_flg:0},
+  //             {x:1, y:0, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:1, y:1, koma_flg:0, koma_own:2, koma_type:1, cand_flg:0, pre_flg:0},
+  //             {x:1, y:2, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:1, y:3, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:1, y:4, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:1, y:5, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:1, y:6, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:1, y:7, koma_flg:0, koma_own:2, koma_type:2, cand_flg:0, pre_flg:0},
+  //             {x:1, y:8, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:2, y:0, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:2, y:1, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:2, y:2, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:2, y:3, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:2, y:4, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:2, y:5, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:2, y:6, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:2, y:7, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:2, y:8, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:3, y:0, koma_flg:0, koma_own:2, koma_type:1, cand_flg:0, pre_flg:0},
+  //             {x:3, y:1, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:3, y:2, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:3, y:3, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:3, y:4, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:3, y:5, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:3, y:6, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:3, y:7, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:3, y:8, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:4, y:0, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:4, y:1, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:4, y:2, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:4, y:3, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:4, y:4, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:4, y:5, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:4, y:6, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:4, y:7, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:4, y:8, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:5, y:0, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:5, y:1, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:5, y:2, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:5, y:3, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:5, y:4, koma_flg:1, koma_own:1, koma_type:1, cand_flg:0, pre_flg:0},
+  //             {x:5, y:5, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:5, y:6, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:5, y:7, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:5, y:8, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:6, y:0, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:6, y:1, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:6, y:2, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:6, y:3, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:6, y:4, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:6, y:5, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:6, y:6, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:6, y:7, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:6, y:8, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:7, y:0, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:7, y:1, koma_flg:0, koma_own:1, koma_type:2, cand_flg:0, pre_flg:0},
+  //             {x:7, y:2, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:7, y:3, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:7, y:4, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:7, y:5, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:7, y:6, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:7, y:7, koma_flg:0, koma_own:1, koma_type:1, cand_flg:0, pre_flg:0},
+  //             {x:7, y:8, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+  //             {x:8, y:0, koma_flg:0, koma_own:1, koma_type:3, cand_flg:0, pre_flg:0},
+  //             {x:8, y:1, koma_flg:0, koma_own:1, koma_type:4, cand_flg:0, pre_flg:0},
+  //             {x:8, y:2, koma_flg:0, koma_own:1, koma_type:5, cand_flg:0, pre_flg:0},
+  //             {x:8, y:3, koma_flg:0, koma_own:1, koma_type:6, cand_flg:0, pre_flg:0},
+  //             {x:8, y:4, koma_flg:0, koma_own:1, koma_type:7, cand_flg:0, pre_flg:0},
+  //             {x:8, y:5, koma_flg:0, koma_own:1, koma_type:6, cand_flg:0, pre_flg:0},
+  //             {x:8, y:6, koma_flg:0, koma_own:1, koma_type:5, cand_flg:0, pre_flg:0},
+  //             {x:8, y:7, koma_flg:0, koma_own:1, koma_type:4, cand_flg:0, pre_flg:0},
+  //             {x:8, y:8, koma_flg:0, koma_own:1, koma_type:3, cand_flg:0, pre_flg:0},
 
-              {x:2, y:0, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0},
-              {x:2, y:1, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0},
-              {x:2, y:2, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0},
-              {x:2, y:3, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0},
-              {x:2, y:4, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0},
-              {x:2, y:5, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0},
-              {x:2, y:6, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0},
-              {x:2, y:7, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0},
-              {x:2, y:8, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0},
-
-              {x:3, y:0, koma_flg:0, koma_own:2, koma_type:1, cand_flg:0},
-              {x:3, y:1, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:3, y:2, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:3, y:3, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:3, y:4, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:3, y:5, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:3, y:6, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:3, y:7, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:3, y:8, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-
-              {x:4, y:0, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:4, y:1, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:4, y:2, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:4, y:3, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:4, y:4, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:4, y:5, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:4, y:6, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:4, y:7, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:4, y:8, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-
-              {x:5, y:0, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:5, y:1, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:5, y:2, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:5, y:3, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:5, y:4, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:5, y:5, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:5, y:6, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:5, y:7, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:5, y:8, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-
-              {x:6, y:0, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0},
-              {x:6, y:1, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0},
-              {x:6, y:2, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0},
-              {x:6, y:3, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0},
-              {x:6, y:4, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0},
-              {x:6, y:5, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0},
-              {x:6, y:6, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0},
-              {x:6, y:7, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0},
-              {x:6, y:8, koma_flg:1, koma_own:1, koma_type:0, cand_flg:0},
-
-              {x:7, y:0, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:7, y:1, koma_flg:1, koma_own:1, koma_type:2, cand_flg:0},
-              {x:7, y:2, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:7, y:3, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:7, y:4, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:7, y:5, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:7, y:6, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:7, y:7, koma_flg:1, koma_own:1, koma_type:1, cand_flg:0},
-              {x:7, y:8, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-
-              {x:8, y:0, koma_flg:1, koma_own:1, koma_type:3, cand_flg:0},
-              {x:8, y:1, koma_flg:1, koma_own:1, koma_type:4, cand_flg:0},
-              {x:8, y:2, koma_flg:1, koma_own:1, koma_type:5, cand_flg:0},
-              {x:8, y:3, koma_flg:1, koma_own:1, koma_type:6, cand_flg:0},
-              {x:8, y:4, koma_flg:1, koma_own:1, koma_type:7, cand_flg:0},
-              {x:8, y:5, koma_flg:1, koma_own:1, koma_type:6, cand_flg:0},
-              {x:8, y:6, koma_flg:1, koma_own:1, koma_type:5, cand_flg:0},
-              {x:8, y:7, koma_flg:1, koma_own:1, koma_type:4, cand_flg:0},
-              {x:8, y:8, koma_flg:1, koma_own:1, koma_type:3, cand_flg:0},
 
 // プレーヤー１墓地
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
-              {x:11, y:11, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:101, y:101, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
 // プレーヤー２墓地
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
-              {x:12, y:12, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:102, y:102, koma_flg:0, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0}
   ];
 
 
-
+let movementarray = [
+                          [//fu
+                            [[-1,0]]
+                          ],
+                          [//hisya
+                            [[-1,0],[-2,0],[-3,0],[-4,0],[-5,0],[-6,0],[-7,0],[-8,0]],
+                            [[0,-1],[0,-2],[0,-3],[0,-4],[0,-5],[0,-6],[0,-7],[0,-8]],
+                            [[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[8,0]],
+                            [[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8]]
+                          ],
+                          [//kaku
+                            [[-1,-1],[-2,-2],[-3,-3],[-4,-4],[-5,-5],[-6,-6],[-7,-7],[-8,-8]],
+                            [[-1,1],[-2,2],[-3,3],[-4,4],[-5,5],[-6,6],[-7,7],[-8,8]],
+                            [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]],
+                            [[1,-1],[2,-2],[3,-3],[4,-4],[5,-5],[6,-6],[7,-7],[8,-8]],
+                          ],
+                          [//kyo
+                            [[-1,0],[-2,0],[-3,0],[-4,0],[-5,0],[-6,0],[-7,0],[-8,0]],
+                          ],
+                          [//kei
+                            [[-2,-1]],
+                            [[-2,1]]
+                          ],
+                          [//gin
+                            [[-1,-1]],
+                            [[-1,0]],
+                            [[-1,1]],
+                            [[1,-1]],
+                            [[1,1]],
+                          ],
+                          [//kin
+                            [[0,-1]],
+                            [[-1,-1]],
+                            [[-1,0]],
+                            [[-1,1]],
+                            [[0,1]],
+                            [[1,0]]
+                          ],
+                          [//gyoku
+                            [[0,-1]],
+                            [[-1,-1]],
+                            [[-1,0]],
+                            [[-1,1]],
+                            [[0,1]],
+                            [[1,1]],
+                            [[1,0]],
+                            [[1,-1]]
+                          ],
+                          [//tokin
+                            [[0,-1]],
+                            [[-1,-1]],
+                            [[-1,0]],
+                            [[-1,1]],
+                            [[0,1]],
+                            [[1,0]]
+                          ],
+                          [//ryusya
+                            [[-1,0],[-2,0],[-3,0],[-4,0],[-5,0],[-6,0],[-7,0],[-8,0]],
+                            [[0,-1],[0,-2],[0,-3],[0,-4],[0,-5],[0,-6],[0,-7],[0,-8]],
+                            [[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[8,0]],
+                            [[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8]],
+                            [[-1,-1]],
+                            [[-1,1]],
+                            [[1,1]],
+                            [[1,-1]]
+                          ],
+                          [//ryuuma
+                            [[-1,-1],[-2,-2],[-3,-3],[-4,-4],[-5,-5],[-6,-6],[-7,-7],[-8,-8]],
+                            [[-1,1],[-2,2],[-3,3],[-4,4],[-5,5],[-6,6],[-7,7],[-8,8]],
+                            [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]],
+                            [[1,-1],[2,-2],[3,-3],[4,-4],[5,-5],[6,-6],[7,-7],[8,-8]],
+                            [[-1,0]],
+                            [[0,-1]],
+                            [[1,0]],
+                            [[0,1]]
+                          ],
+                          [//narikyo
+                            [[0,-1]],
+                            [[-1,-1]],
+                            [[-1,0]],
+                            [[-1,1]],
+                            [[0,1]],
+                            [[1,0]]
+                          ],
+                          [//narikei
+                            [[0,-1]],
+                            [[-1,-1]],
+                            [[-1,0]],
+                            [[-1,1]],
+                            [[0,1]],
+                            [[1,0]]
+                          ],
+                          [//narigin
+                            [[0,-1]],
+                            [[-1,-1]],
+                            [[-1,0]],
+                            [[-1,1]],
+                            [[0,1]],
+                            [[1,0]]
+                          ]
+                        ];
 
 
   // console.log(cell["koma_type"]);
 
   // console.log(cell["koma_flg"]);
 
-  showkoma();
+// let countup = 0;
+// function totaltimecounter(){
 
-  $("#kiban td").bind('click', function(){
+//   // $("#totaltime").html(countup);
+//   console.log(countup++);
+// };
+// // let timenow = totaltimecounter();
+// setInterval(timenow, 1000);
+
+
+
+
+
+showkoma();
+let firstturnplayer = 1;
+let turn = firstturnplayer;
+
+
+$("#kiban td").bind('click', function(){
     $tag_td = $(this)[0];
     $tag_tr = $(this).parent()[0];
     console.log("x:%s, y:%s", $tag_tr.rowIndex, $tag_td.cellIndex);
 
+    function select(x,y){
+        for(let i=0; i<=80; i++){
+            if(cell[i]["x"]==x && cell[i]["y"]==y){
+                turncheck();
+                activate(i);
+                gyokucantmove(i);
+                move(i);
+                oute();
+                highlight(i);
+                showkoma();
+            };
+        };
+    };
+
     select($tag_tr.rowIndex,$tag_td.cellIndex);
 
-  });
+});
 
 
 
@@ -334,10 +567,6 @@ chkSSID();
 
 
 </script>
-
-
-
-
 <?php  ?>
 </body>
 </html>

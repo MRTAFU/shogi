@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link href="css/*******" rel="stylesheet"> -->
+    <title>Untitled</title>
+</head>
+<body>
+<div>hello</div>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script> 
+
+<script>
+  let cell = [{x:0, y:0, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:0, y:1, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:0, y:2, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:0, y:3, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:0, y:4, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:0, y:5, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:0, y:6, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:0, y:7, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:0, y:8, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:1, y:0, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:1, y:1, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:1, y:2, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:1, y:3, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:1, y:4, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:1, y:5, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:1, y:6, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:1, y:7, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:1, y:8, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:2, y:0, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:2, y:1, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:2, y:2, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:2, y:3, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:2, y:4, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:2, y:5, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:2, y:6, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:2, y:7, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:2, y:8, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:3, y:0, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:3, y:1, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:3, y:2, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:3, y:3, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:3, y:4, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:3, y:5, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:3, y:6, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:3, y:7, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:3, y:8, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:4, y:0, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:4, y:1, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:4, y:2, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:4, y:3, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:4, y:4, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:4, y:5, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:4, y:6, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:4, y:7, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:4, y:8, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:5, y:0, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:5, y:1, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:5, y:2, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:5, y:3, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:5, y:4, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:5, y:5, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:5, y:6, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:5, y:7, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:5, y:8, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:6, y:0, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:6, y:1, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:6, y:2, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:6, y:3, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:6, y:4, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:6, y:5, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:6, y:6, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:6, y:7, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:6, y:8, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:7, y:0, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:7, y:1, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:7, y:2, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:7, y:3, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:7, y:4, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:7, y:5, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:7, y:6, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:7, y:7, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:7, y:8, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:8, y:0, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:8, y:1, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:8, y:2, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:8, y:3, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:8, y:4, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:8, y:5, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:8, y:6, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:8, y:7, koma_flg:0, koma_own:1, koma_type:0, cand_flg:0, pre_flg:0},
+              {x:8, y:8, koma_flg:1, koma_own:2, koma_type:0, cand_flg:0, pre_flg:0}]
+
+
+let movementarray = [
+                      [
+                        [[-1,0]]
+                      ],
+                      [
+                        [[-1,-1],[-2,-2],[-3,-3],[-4,-4],[-5,-5],[-6,-6],[-7,-7],[-8,-8]],
+                        [[-1,1],[-2,2],[-3,3],[-4,4],[-5,5],[-6,6],[-7,7],[-8,8]],
+                        [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]],
+                        [[1,-1],[2,-2],[3,-3],[4,-4],[5,-5],[6,-6],[7,-7],[8,-8]],
+                      ],
+                      [
+                        [[-1,0],[-2,0],[-3,0],[-4,0],[-5,0],[-6,0],[-7,0],[-8,0]],
+                        [[0,-1],[0,-2],[0,-3],[0,-4],[0,-5],[0,-6],[0,-7],[0,-8]],
+                        [[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[8,0]],
+                        [[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8]]
+                      ],
+                      [
+                        [[-1,0],[-2,0],[-3,0],[-4,0],[-5,0],[-6,0],[-7,0],[-8,0]],
+                      ],
+                      [
+                        [[-2,-1]],
+                        [[-2,-1]]
+                      ],
+                      [
+                        [[-1,-1]],
+                        [[-1,0]],
+                        [[-1,1]],
+                        [[1,-1]],
+                        [[1,1]],
+                      ],
+                      [
+                        [[0,-1]],
+                        [[-1,-1]],
+                        [[-1,0]],
+                        [[-1,1]],
+                        [[0,1]],
+                        [[1,0]]
+                      ],
+                      [
+                        [[0,-1]],
+                        [[-1,-1]],
+                        [[-1,0]],
+                        [[-1,1]],
+                        [[0,1]],
+                        [[1,1]],
+                        [[1,0]],
+                        [[1,-1]]
+                      ],
+                      [
+                        [[0,-1]],
+                        [[-1,-1]],
+                        [[-1,0]],
+                        [[-1,1]],
+                        [[0,1]],
+                        [[1,0]]
+                      ],
+                      [
+                        [[-1,-1],[-2,-2],[-3,-3],[-4,-4],[-5,-5],[-6,-6],[-7,-7],[-8,-8]],
+                        [[-1,1],[-2,2],[-3,3],[-4,4],[-5,5],[-6,6],[-7,7],[-8,8]],
+                        [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]],
+                        [[1,-1],[2,-2],[3,-3],[4,-4],[5,-5],[6,-6],[7,-7],[8,-8]],
+                        [[-1,0]],
+                        [[0,-1]],
+                        [[1,0]],
+                        [[0,1]]
+                      ],
+                      [
+                        [[-1,0],[-2,0],[-3,0],[-4,0],[-5,0],[-6,0],[-7,0],[-8,0]],
+                        [[0,-1],[0,-2],[0,-3],[0,-4],[0,-5],[0,-6],[0,-7],[0,-8]],
+                        [[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[8,0]],
+                        [[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8]],
+                        [[-1,-1]],
+                        [[-1,1]],
+                        [[1,1]],
+                        [[1,-1]]
+                      ],
+                      [
+                        [[0,-1]],
+                        [[-1,-1]],
+                        [[-1,0]],
+                        [[-1,1]],
+                        [[0,1]],
+                        [[1,0]]
+                      ],
+                      [
+                        [[0,-1]],
+                        [[-1,-1]],
+                        [[-1,0]],
+                        [[-1,1]],
+                        [[0,1]],
+                        [[1,0]]
+                      ],
+                      [
+                        [[0,-1]],
+                        [[-1,-1]],
+                        [[-1,0]],
+                        [[-1,1]],
+                        [[0,1]],
+                        [[1,0]]
+                      ]
+                    ];
+
+let i = 80;
+console.log("pre_flg"+cell[i]["pre_flg"]);
+cell[i]["pre_flg"] = 1;
+console.log("pre_flg" + cell[i]["pre_flg"]);
+let k = cell[i]["koma_type"];
+console.log("k:koma_type:"+k);
+
+patternamnt = movementarray[k].length
+console.log("k要素の構成パターン数:"+ patternamnt);
+let patternarrayno = patternamnt -1;//配列の要素を指定するためにひとつ減らす。
+console.log("パターンの要素max.no." + patternarrayno);
+for(let pattern = 0; pattern<=patternarrayno; pattern++){
+  console.log("pattern:"+ pattern);
+    let length = movementarray[k][pattern].length; //これが移動する可能性がある座標の総数。
+    console.log("length:"+length);
+    length-=1;                            //配列の要素を指定する時に、0スタートだから一つ多い。
+    console.log("length" + length)
+    
+    //的に当たるまで候補フラグを立て続ける処理
+
+    let end_flg=0;
+    let j=0;
+    while(end_flg==0){
+        console.log(end_flg);
+        console.log(movementarray[k][pattern][j]);
+        let x=0;
+        let y = 0;
+        if(cell[i]["koma_own"]==1){
+            x = cell[i]["x"] + movementarray[k][pattern][j][0];
+            console.log("cand_flagを立てる　x:"+ x + ",y:" + y);
+        }else if(cell[i]["koma_own"]==2){
+            x = cell[i]["x"] - movementarray[k][pattern][j][0];
+            console.log("cand_flagを立てる　x:"+ x + ",y:" + y);
+        };
+        if(j==length){
+            end_flg = 1;
+            console.log("これ以上動くパターンないよ")
+        }else{
+            if(x>=0 && x<=8 && y>=0 && y<=8){
+            j++;
+    
+            //cand_flagを立てるセルを盤面から探す
+                for(let l=0; l<=80; l++){
+                    if(cell[l]["x"]== x && cell[l]["y"]==y){
+                        if(cell[l]["koma_flg"]==0){
+                            cell[l]["cand_flg"]=1;
+                            console.log("cell[l]:" + cell[l]);
+                        }else if(cell[l]["koma_flg"]==1){
+                            end_flg = 1;
+                            console.log("駒にぶつかったよend:" + end_flg);
+                            if(cell[l]["koma_own"]!=cell[i]["koma_own"]){
+                                 cell[l]["cand_flg"]=1;
+                                 console.log("敵駒だよcand:" + cell[l]["cand_flg"]);
+                            };
+                        };
+                    };
+              
+                };
+            }else{
+                end_flg = 1;
+                console.log("盤の外だからエンドフラグがたったよ")
+            };
+        };
+    }
+};
+</script>
+
+<?php  ?>
+</body>
+</html>
